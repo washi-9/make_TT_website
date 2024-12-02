@@ -21,12 +21,21 @@ class Process:
         self.ndown = int(ndown) if ndown.isdigit() or ndown.lstrip('-').isdigit() else -1
         self.duration = int(duration) if duration.isdigit() else 0
 
-
-def process_group_data(groups):
+def process_group_data(groups,initial_time,last_event):
     """
     C言語の形式に準拠したスケジュール計算を行い、結果を文字列で返す。
     """
-    start_time = Time(6, 0)  # 開始時刻
+    # initial_timeをTimeオブジェクトに変換
+    hours = int(initial_time[:2])
+    minutes = int(initial_time[2:])
+    start_time = Time(hours, minutes)  # 開始時刻
+
+    # すべての要素が空のグループを削除
+    groups = [group for group in groups if not all(item == "" for item in group)]
+    
+    # "就寝"イベントを追加
+    groups.append((last_event, "", "0", "0", "0", "0"))
+
     processes = [Process(*group) for group in groups]
     current_time = start_time
 
@@ -42,16 +51,19 @@ def process_group_data(groups):
         if process.ndown > 0:
             total_down += process.ndown
 
+    # 全ての距離アップダウンを最初に追加
     result += f"{total_distance}km {total_up}up {total_down}down\n\n"
 
+    
+
     for i, process in enumerate(processes):
-        # 現在の時刻とイベント名
-        result += f"{current_time.hours:02d}:{current_time.minutes:02d} {process.event}\n"
+        # 1. 現在の時刻と場所（event）を追加
+        result += f"{current_time.hours:02d}:{current_time.minutes:02d} {process.event}\n" #うまく動いていない
 
         if i == len(processes) - 1:  # 最後の工程の場合
             break
 
-        # ↓ 情報
+        # 2. ↓情報および詳細情報（km, up, down, duration）を追加
         duration_str = ""
         if process.duration > 0:
             if process.duration % 60 == 0:
@@ -77,9 +89,12 @@ def process_group_data(groups):
         elif process.ndown > 0:
             movement.append(f"{process.ndown}down")
 
-        result += f"\n↓{process.information} {' '.join(movement)} {duration_str}\n"
+        # ↓情報を result に追加
+        result += f" ↓{process.information} {' '.join(movement)} {duration_str}\n"
 
-        # 次の時刻を計算
+        # 3. 次の時刻を計算
         current_time.add_time(process.duration)
+    
+    # result += "就寝"
 
     return result

@@ -2,7 +2,7 @@ import streamlit as st
 import json
 from utils import process_group_data
 
-st.title('TT案作成サイト')
+st.title('TT案作成サイト β版')
 
 # 初期化
 if "groups" not in st.session_state:

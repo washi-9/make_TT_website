@@ -139,5 +139,6 @@ st.download_button(
 )
 """
 ---
-文責:遠藤
+文責:遠藤  
+mail: tokails188s@gmail.com
 """

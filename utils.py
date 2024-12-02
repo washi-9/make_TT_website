@@ -21,7 +21,7 @@ class Process:
         self.ndown = int(ndown) if ndown.isdigit() or ndown.lstrip('-').isdigit() else -1
         self.duration = int(duration) if duration.isdigit() else 0
 
-def process_group_data(groups,initial_time,last_event):
+def process_group_data(groups,initial_time="0600",last_event="就寝"):
     """
     C言語の形式に準拠したスケジュール計算を行い、結果を文字列で返す。
     """

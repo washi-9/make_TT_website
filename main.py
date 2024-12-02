@@ -35,12 +35,35 @@ if len(st.session_state.groups) == 0:
 
 """
 ---
+記述例:
+
+06:00 起床  
+ ↓出発準備、朝食 1h  
+07:00 快活クラブ出発  
+ ↓ 10km 100up 微down  
+08:00...    
+と記述したい場合は
+
+|工程数|1.場所|2.情報|3.km|4.up|5.down|6.時間|
+|---|---|---|---|---|---|---|
+|工程1|起床|出発準備、朝食|0|0|0|60|
+|工程2|快活クラブ|   |10|100|-1|60|  
+
+
+というように入力してください  
+km,up,down,時間の項目は半角数字で入力してください  
+微kmを表したいときは-1を入力してください
+
+---
 """
 
 # 最初の時刻の入力
 initial_time_input = st.text_input(f"開始時刻を入力してください(デフォルト0600=6時)",value="0600")
 
+"""
+---
 
+"""
 # 各グループの入力を横一列に並べて表示
 for group_index, group in enumerate(st.session_state.groups):
     st.subheader(f"工程 {group_index + 1}")
@@ -81,8 +104,8 @@ for group_index, group in enumerate(st.session_state.groups):
             if user_input:
                 all_empty = False
 
-    # 現在のグループが全て埋まっており、最後のグループなら新しいグループを追加
-    if all_filled and group_index == len(st.session_state.groups) - 1:
+    # 6つ目の要素が入力されていたら、最後のグループなら新しいグループを追加
+    if st.session_state.groups[group_index][5].strip() and group_index == len(st.session_state.groups) - 1:
         add_group()
 
 last_event_input = st.text_input(f"最後の項目を追加してください(デフォルト:就寝)",value="就寝")
@@ -114,3 +137,7 @@ st.download_button(
     file_name="groups.json",
     mime="application/json"
 )
+"""
+---
+文責:遠藤
+"""
